@@ -150,38 +150,16 @@ class CameraService : IntentService("CameraService") {
             Log.d(TAG, "mCaptureCallback process" + result.toString())
             Log.d(TAG, "mCaptureCallback state" + mState)
             when (mState) {
-                STATE_PREVIEW -> {
-                }// We have nothing to do when the camera preview is working normally.
                 STATE_WAITING_LOCK -> {
                     val afState = result.get(CaptureResult.CONTROL_AF_STATE)
-                    if (afState == null) {
-                        captureStillPicture()
-                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
+                    if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
                         // CONTROL_AE_STATE can be null on some devices
                         val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
                         if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
                             mState = STATE_PICTURE_TAKEN
-                            captureStillPicture()
                         } else {
                             runPrecaptureSequence()
                         }
-                    }
-                }
-                STATE_WAITING_PRECAPTURE -> {
-                    // CONTROL_AE_STATE can be null on some devices
-                    val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
-                    if (aeState == null ||
-                            aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE ||
-                            aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                        mState = STATE_WAITING_NON_PRECAPTURE
-                    }
-                }
-                STATE_WAITING_NON_PRECAPTURE -> {
-                    // CONTROL_AE_STATE can be null on some devices
-                    val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
-                    if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-                        mState = STATE_PICTURE_TAKEN
-                        captureStillPicture()
                     }
                 }
             }
@@ -205,7 +183,6 @@ class CameraService : IntentService("CameraService") {
         Log.d(TAG, "onHandleIntent")
         startBackgroundThread()
         takePicture()
-//        Handler().postDelayed({ takePicture() }, 3000)
     }
 
     /**
@@ -219,7 +196,6 @@ class CameraService : IntentService("CameraService") {
         Log.d(TAG, "openCamera")
 
         setUpCameraOutputs(width, height)
-//        configureTransform(width, height)
         val manager = this.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -313,10 +289,6 @@ class CameraService : IntentService("CameraService") {
                             // When the session is ready, we start displaying the preview.
                             mCaptureSession = cameraCaptureSession
                             try {
-                                // Auto focus should be continuous for camera preview.
-                                // Flash is automatically enabled when necessary.
-//                                setAutoFlash(mPreviewRequestBuilder)
-
                                 // Finally, we start displaying the camera preview.
 //                                mPreviewRequest = mPreviewRequestBuilder?.build()
 //                                mCaptureSession?.setRepeatingRequest(mPreviewRequest,
@@ -328,13 +300,10 @@ class CameraService : IntentService("CameraService") {
                                     lockFocus()
                                     sleep(1000)
                                     lockFocus()
-                                    sleep(2000)
-                                    closeCamera()
-                                    stopBackgroundThread()
+//                                    sleep(2000)
+//                                    closeCamera()
+//                                    stopBackgroundThread()
                                 }, 1000)
-//                                closeCamera()
-//                                stopBackgroundThread()
-
                             } catch (e: CameraAccessException) {
                                 Log.e(TAG, "err: " + e.message)
                             } catch (e: InterruptedException) {
@@ -397,47 +366,6 @@ class CameraService : IntentService("CameraService") {
     }
 
     /**
-     * Capture a still picture. This method should be called when we get a response in
-     * [.mCaptureCallback] from both [.lockFocus].
-     */
-    private fun captureStillPicture() {
-//        try {
-////            val activity = getActivity()
-//            Log.d(TAG, "captureStillPicture " + mCameraDevice)
-//
-//            if (null == mCameraDevice) {
-//                return
-//            }
-//            // This is the CaptureRequest.Builder that we use to take a picture.
-//            val captureBuilder = mCameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)
-//            captureBuilder.addTarget(mImageReader?.surface)
-//
-//            // Use the same AE and AF modes as the preview.
-//            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-//                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
-//            Log.d(TAG, "captureStillPicture ScreenOrientation: " + mSensorOrientation)
-//            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, mSensorOrientation)
-//
-//            val captureCallback = object : CameraCaptureSession.CaptureCallback() {
-//
-//                override fun onCaptureCompleted(session: CameraCaptureSession,
-//                                                request: CaptureRequest,
-//                                                result: TotalCaptureResult) {
-//                    Toast.makeText(this@CameraService, "Saved: " + mFile, LENGTH_SHORT).show()
-//                    Log.d(TAG, mFile.toString())
-//                    unlockFocus()
-//                }
-//            }
-//
-//            mCaptureSession?.stopRepeating()
-//            mCaptureSession?.abortCaptures()
-//            mCaptureSession?.capture(captureBuilder.build(), captureCallback, null)
-//        } catch (e: CameraAccessException) {
-//            e.printStackTrace()
-//        }
-    }
-
-    /**
      * Unlock the focus. This method should be called when still image capture sequence is
      * finished.
      */
@@ -458,9 +386,6 @@ class CameraService : IntentService("CameraService") {
      */
     private fun takePicture() {
         openCamera(1920, 1080)
-//        lockFocus()
-//        closeCamera()
-//        stopBackgroundThread()
     }
 
     /**
