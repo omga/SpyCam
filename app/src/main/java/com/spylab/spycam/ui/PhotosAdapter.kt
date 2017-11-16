@@ -18,7 +18,8 @@ import java.io.File
  * @author a.hatrus.
  */
 
-class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
+class PhotosAdapter(private var context: Context, private val imageWidth: Int,
+                    private val selectedCallback: OnItemsSelectedCallback) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var photos: MutableList<File> = mutableListOf()
@@ -62,10 +63,24 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder : RecyclerView.ViewHolder,
-            View.OnClickListener, View.OnLongClickListener {
+    fun deleteSelectedPhotos() {
+        selectedItems.sort()
+        var lastIndex = selectedItems.size - 1
+        for (i in photos.size downTo 0) {
+            if (i == selectedItems[lastIndex]) {
+                photos.removeAt(i).delete()
+                if (--lastIndex == -1)
+                    break
+            }
+        }
+        selectedItems.clear()
+        notifyDataSetChanged()
+        selectedCallback.onSelectionChanged(false)
+    }
 
-        constructor(view: View) : super(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view),
+            View.OnClickListener, View.OnLongClickListener {
+        init {
             itemView.setOnLongClickListener(this)
             itemView.setOnClickListener(this)
         }
@@ -79,7 +94,7 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
                     .apply(RequestOptions().centerCrop())
                     .into(imageFullScreen)
             dialog.setContentView(imageFullScreen)
-            dialog.window.attributes.windowAnimations = R.style.Animation_AppCompat_Tooltip
+            dialog.window.attributes.windowAnimations = android.R.style.Animation_Dialog
             dialog.show()
         }
 
@@ -91,7 +106,12 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
                 selectedItems.add(index)
             }
             notifyItemChanged(index)
+            selectedCallback.onSelectionChanged(!selectedItems.isEmpty())
             return true
         }
+    }
+
+    interface OnItemsSelectedCallback {
+        fun onSelectionChanged(hasSelectedItems: Boolean)
     }
 }
