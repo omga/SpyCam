@@ -1,5 +1,6 @@
 package com.spylab.spycam.ui
 
+import android.app.Dialog
 import android.content.Context
 import android.support.annotation.NonNull
 import android.support.v7.widget.RecyclerView
@@ -31,14 +32,14 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
         var photo = photos[position]
         Glide.with(context)
                 .load(photo)
-                .apply(RequestOptions().centerCrop().sizeMultiplier(0.1f))
+                .apply(RequestOptions().centerCrop().sizeMultiplier(0.2f))
                 .into(holder?.itemView?.image)
-//
-//        if(selectedItems.contains(position)) {
-//            holder?.itemView?.imageSelected?.visibility = View.VISIBLE
-//        } else {
-//            holder?.itemView?.imageSelected?.visibility = View.GONE
-//        }
+
+        if (selectedItems.contains(position)) {
+            holder?.itemView?.imageSelected?.visibility = View.VISIBLE
+        } else {
+            holder?.itemView?.imageSelected?.visibility = View.GONE
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
@@ -61,23 +62,36 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view),
+    inner class ViewHolder : RecyclerView.ViewHolder,
             View.OnClickListener, View.OnLongClickListener {
-        private lateinit var image: ImageView
-        private lateinit var imageSelected: ImageView
+
+        constructor(view: View) : super(view) {
+            itemView.setOnLongClickListener(this)
+            itemView.setOnClickListener(this)
+        }
+
         override fun onClick(v: View?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            val dialog = Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            val imageFullScreen = ImageView(context)
+            imageFullScreen.setOnClickListener { dialog.cancel() }
+            Glide.with(context)
+                    .load(photos[adapterPosition])
+                    .apply(RequestOptions().centerCrop())
+                    .into(imageFullScreen)
+            dialog.setContentView(imageFullScreen)
+            dialog.window.attributes.windowAnimations = R.style.Animation_AppCompat_Tooltip
+            dialog.show()
         }
 
         override fun onLongClick(v: View?): Boolean {
-//            val index = adapterPosition
-//            if (selectedItems.contains(index)) {
-//                selectedItems.remove(index)
-//            } else {
-//                selectedItems.add(index)
-//            }
-//            notifyDataSetChanged()
-            return false
+            val index = adapterPosition
+            if (selectedItems.contains(index)) {
+                selectedItems.remove(index)
+            } else {
+                selectedItems.add(index)
+            }
+            notifyItemChanged(index)
+            return true
         }
     }
 }
