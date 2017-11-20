@@ -86,6 +86,10 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int,
         }
 
         override fun onClick(v: View?) {
+            if (!selectedItems.isEmpty()) {
+                v?.performLongClick()
+                return
+            }
             val dialog = Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
             val imageFullScreen = ImageView(context)
             imageFullScreen.setOnClickListener { dialog.cancel() }

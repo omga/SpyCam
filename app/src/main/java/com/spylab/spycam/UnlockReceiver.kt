@@ -8,6 +8,8 @@ import android.util.Log
 class UnlockReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("UnlockReceiver", "ACTION_USER_PRESENT " + intent.action)
+
         when {
             intent.action == Intent.ACTION_USER_PRESENT -> {
                 //user unlocked the phone - start cam service
@@ -24,4 +26,5 @@ class UnlockReceiver : BroadcastReceiver() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startService(intent)
     }
+
 }

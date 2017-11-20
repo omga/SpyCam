@@ -16,6 +16,7 @@ import android.widget.Button
 import com.spylab.spycam.CameraService
 import com.spylab.spycam.PhotoFileReader
 import com.spylab.spycam.R
+import com.spylab.spycam.UnlockReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 

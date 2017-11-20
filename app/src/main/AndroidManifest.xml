@@ -27,14 +27,14 @@
             android:name=".CameraService"
             android:enabled="true"
             android:exported="false"
-            android:process=":remotetete"
+            android:process=":spy-remote"
             android:stopWithTask="false" />
 
         <receiver
             android:name=".UnlockReceiver"
             android:enabled="true"
             android:exported="false"
-            android:process=":remotetete">
+            android:process=":spy-remote">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_ON" />
                 <action

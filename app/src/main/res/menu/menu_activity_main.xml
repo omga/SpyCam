@@ -9,10 +9,10 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_item_delete_all"
-        android:title="@string/title_settings"
+        android:title="@string/title_delete_all"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_item_settings"
-        android:title="@string/title_delete_all"
+        android:title="@string/title_settings"
         app:showAsAction="never" />
 </menu>
