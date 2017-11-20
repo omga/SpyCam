@@ -24,14 +24,14 @@
         </activity>
 
         <service
-            android:name=".CameraService"
+            android:name=".remote.CameraService"
             android:enabled="true"
             android:exported="false"
             android:process=":spy-remote"
             android:stopWithTask="false" />
 
         <receiver
-            android:name=".UnlockReceiver"
+            android:name=".remote.UnlockReceiver"
             android:enabled="true"
             android:exported="false"
             android:process=":spy-remote">

@@ -9,14 +9,12 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import com.spylab.spycam.CameraService
-import com.spylab.spycam.PhotoFileReader
+import com.spylab.spycam.remote.CameraService
+import com.spylab.spycam.util.PhotoFileReader
 import com.spylab.spycam.R
-import com.spylab.spycam.UnlockReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 

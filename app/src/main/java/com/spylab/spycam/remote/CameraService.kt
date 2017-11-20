@@ -1,4 +1,4 @@
-package com.spylab.spycam
+package com.spylab.spycam.remote
 
 import android.Manifest
 import android.app.IntentService
@@ -16,6 +16,7 @@ import android.util.Log
 import android.util.Size
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import com.spylab.spycam.util.ImageSaver
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.Semaphore
