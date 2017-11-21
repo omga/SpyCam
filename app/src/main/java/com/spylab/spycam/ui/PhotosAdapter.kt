@@ -1,5 +1,6 @@
 package com.spylab.spycam.ui
 
+import android.app.Dialog
 import android.content.Context
 import android.support.annotation.NonNull
 import android.support.v7.widget.RecyclerView
@@ -17,9 +18,13 @@ import java.io.File
  * @author a.hatrus.
  */
 
-class PhotosAdapter(private var context: Context, private val imageWidth: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PhotosAdapter(private var context: Context, private val imageWidth: Int,
+                    private val selectedCallback: OnItemsSelectedCallback) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var photos: MutableList<File> = mutableListOf()
+    private var selectedItems: MutableList<Int> = mutableListOf()
+
     override fun getItemCount(): Int {
         return photos.size
     }
@@ -28,8 +33,14 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
         var photo = photos[position]
         Glide.with(context)
                 .load(photo)
-                .apply(RequestOptions().centerCrop())
+                .apply(RequestOptions().centerCrop().sizeMultiplier(0.33f))
                 .into(holder?.itemView?.image)
+
+        if (selectedItems.contains(position)) {
+            holder?.itemView?.imageSelected?.visibility = View.VISIBLE
+        } else {
+            holder?.itemView?.imageSelected?.visibility = View.GONE
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
@@ -52,7 +63,59 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int) :
         notifyDataSetChanged()
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private lateinit var image: ImageView
+    fun deleteSelectedPhotos() {
+        selectedItems.sort()
+        var lastIndex = selectedItems.size - 1
+        for (i in photos.size downTo 0) {
+            if (i == selectedItems[lastIndex]) {
+                photos.removeAt(i).delete()
+                if (--lastIndex == -1)
+                    break
+            }
+        }
+        selectedItems.clear()
+        notifyDataSetChanged()
+        selectedCallback.onSelectionChanged(false)
+    }
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view),
+            View.OnClickListener, View.OnLongClickListener {
+        init {
+            itemView.setOnLongClickListener(this)
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            if (!selectedItems.isEmpty()) {
+                v?.performLongClick()
+                return
+            }
+            val dialog = Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            val imageFullScreen = ImageView(context)
+            imageFullScreen.setOnClickListener { dialog.cancel() }
+            Glide.with(context)
+                    .load(photos[adapterPosition])
+                    .apply(RequestOptions().centerCrop())
+                    .into(imageFullScreen)
+            dialog.setContentView(imageFullScreen)
+            dialog.window.attributes.windowAnimations = android.R.style.Animation_Dialog
+            dialog.show()
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            val index = adapterPosition
+            if (selectedItems.contains(index)) {
+                selectedItems.remove(index)
+            } else {
+                selectedItems.add(index)
+            }
+            notifyItemChanged(index)
+            selectedCallback.onSelectionChanged(!selectedItems.isEmpty())
+            return true
+        }
+    }
+
+    interface OnItemsSelectedCallback {
+        fun onSelectionChanged(hasSelectedItems: Boolean)
     }
 }

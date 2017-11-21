@@ -1,4 +1,4 @@
-package com.spylab.spycam
+package com.spylab.spycam.util
 
 import android.content.Context
 import android.media.Image

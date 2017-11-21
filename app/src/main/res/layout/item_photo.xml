@@ -8,4 +8,13 @@
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/imageSelected"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_selected"
+        android:visibility="visible" />
 </FrameLayout>
