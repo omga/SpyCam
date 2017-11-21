@@ -9,10 +9,8 @@ import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
 import com.spylab.spycam.R
 import com.spylab.spycam.util.PhotoFileReader
 import com.spylab.spycam.util.ProcessHelper
@@ -36,26 +34,7 @@ class MainActivity : AppCompatActivity(), PhotosAdapter.OnItemsSelectedCallback 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById<Button>(R.id.startService).setOnClickListener {
-            //            ProcessHelper.startCameraCapture(this@MainActivity)
-            ProcessHelper.unregisterReceiver(this)
-            var s = "prefs: "
-            s += PreferenceManager
-                    .getDefaultSharedPreferences(MainActivity@ this)
-                    .getString("number_of_photos", "3")
-            ProcessHelper.unregisterReceiver(this)
-            s += PreferenceManager
-                    .getDefaultSharedPreferences(MainActivity@ this)
-                    .getBoolean("enable_spy_switch", true)
-            s += PreferenceManager
-                    .getDefaultSharedPreferences(MainActivity@ this)
-                    .getBoolean("enable_pin_switch", true)
-
-            Log.d("MAIN", "KEYS VALUES: " + s)
-
-        }
         setupRecycler()
-
         if (PreferenceManager
                 .getDefaultSharedPreferences(this)
                 .getBoolean("enable_spy_switch", true) &&
@@ -63,7 +42,6 @@ class MainActivity : AppCompatActivity(), PhotosAdapter.OnItemsSelectedCallback 
             ProcessHelper.startRemoteProcess(this)
             ProcessHelper.registerReceiver(this)
         }
-
 
     }
 
