@@ -11,6 +11,7 @@ import android.media.ImageReader
 import android.media.ImageReader.OnImageAvailableListener
 import android.os.Handler
 import android.os.HandlerThread
+import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.util.Size
@@ -25,6 +26,8 @@ import java.util.concurrent.TimeUnit
 
 class CameraService : IntentService("CameraService") {
     private val TAG = "CameraService"
+
+    private var NUMBER_OF_PHOTOS = 3
 
     /**
      * Camera state: Showing camera preview.
@@ -180,8 +183,17 @@ class CameraService : IntentService("CameraService") {
 
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        NUMBER_OF_PHOTOS = PreferenceManager
+                .getDefaultSharedPreferences(this@CameraService)
+                .getString("number_of_photos", "3").toInt()
+    }
+
     override fun onHandleIntent(intent: Intent?) {
         Log.d(TAG, "onHandleIntent")
+        if (intent?.extras?.get("Command") != null)
+            return
         startBackgroundThread()
         takePicture()
     }
@@ -296,15 +308,19 @@ class CameraService : IntentService("CameraService") {
 //                                        mCaptureCallback, mBackgroundHandler)
                                 Log.d(TAG, "createCameraPreviewSession " + mPreviewRequest)
                                 Log.d(TAG, "createCameraPreviewSession " + mCaptureSession)
-                                lockFocus()
-                                Handler().postDelayed(Runnable {
+
+                                for (i in 0 until NUMBER_OF_PHOTOS) {
                                     lockFocus()
                                     sleep(1000)
-                                    lockFocus()
-//                                    sleep(2000)
-//                                    closeCamera()
-//                                    stopBackgroundThread()
-                                }, 1000)
+                                }
+//                                Handler().postDelayed(Runnable {
+//                                    lockFocus()
+//                                    sleep(1000)
+//                                    lockFocus()
+////                                    sleep(2000)
+////                                    closeCamera()
+////                                    stopBackgroundThread()
+//                                }, 1000)
                             } catch (e: CameraAccessException) {
                                 Log.e(TAG, "err: " + e.message)
                             } catch (e: InterruptedException) {
@@ -354,7 +370,7 @@ class CameraService : IntentService("CameraService") {
                 mSensorOrientation = manager.getCameraCharacteristics(mCameraId).get(
                         CameraCharacteristics.SENSOR_ORIENTATION)
                 mImageReader = ImageReader.newInstance(largest.width, largest.height,
-                        ImageFormat.JPEG, /*maxImages*/2)
+                        ImageFormat.JPEG, /*maxImages*/NUMBER_OF_PHOTOS)
                 mImageReader?.setOnImageAvailableListener(
                         mOnImageAvailableListener, mBackgroundHandler)
 

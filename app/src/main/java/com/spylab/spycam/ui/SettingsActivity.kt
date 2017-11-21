@@ -8,15 +8,11 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
-import android.preference.RingtonePreference
+import android.preference.*
 import android.text.TextUtils
 import android.view.MenuItem
 import com.spylab.spycam.R
+import com.spylab.spycam.util.ProcessHelper
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -33,6 +29,22 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
+    }
+
+    override fun onStop() {
+        super.onStop()
+//        PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getInt("number_of_photos", 3)
+        if (PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getBoolean("enable_spy_switch", true)) {
+            ProcessHelper.startRemoteProcess(this)
+            ProcessHelper.registerReceiver(this)
+        } else {
+            ProcessHelper.unregisterReceiver(this)
+        }
+
     }
 
     /**
@@ -82,7 +94,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_list"))
+            bindPreferenceSummaryToValue(findPreference("number_of_photos"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,12 +117,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_notification)
             setHasOptionsMenu(true)
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
