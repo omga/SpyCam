@@ -33,7 +33,7 @@ class PhotosAdapter(private var context: Context, private val imageWidth: Int,
         var photo = photos[position]
         Glide.with(context)
                 .load(photo)
-                .apply(RequestOptions().centerCrop().sizeMultiplier(0.2f))
+                .apply(RequestOptions().centerCrop().sizeMultiplier(0.33f))
                 .into(holder?.itemView?.image)
 
         if (selectedItems.contains(position)) {

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
+import android.preference.PreferenceManager
 import android.util.Log
 
 
@@ -23,15 +24,19 @@ class UnkillableService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         Log.d("UnkillableService", "onTaskRemoved")
-        val restartService = Intent(applicationContext,
-                UnkillableService::class.java)
-        val restartServicePI = PendingIntent.getService(
-                applicationContext, 34531, restartService,
-                PendingIntent.FLAG_ONE_SHOT)
+        if (PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getBoolean("enable_spy_switch", true)) {
 
-        //Restart the service once it has been killed android
-        val alarmService = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 3000, restartServicePI)
+            val restartService = Intent(applicationContext,
+                    UnkillableService::class.java)
+            val restartServicePI = PendingIntent.getService(
+                    applicationContext, 34531, restartService,
+                    PendingIntent.FLAG_ONE_SHOT)
 
+            //Restart the service once it has been killed android
+            val alarmService = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 3000, restartServicePI)
+        }
     }
 }
