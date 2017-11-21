@@ -198,17 +198,20 @@ class CameraService : IntentService("CameraService") {
         takePicture()
     }
 
-    /**
-     * Opens the camera specified by [Camera2BasicFragment.mCameraId].
-     */
-    private fun openCamera(width: Int, height: Int) {
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Log.d(TAG, "onTaskRemoved")
+        super.onTaskRemoved(rootIntent)
+
+    }
+
+    private fun openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            requestCameraPermission()
             return
         }
         Log.d(TAG, "openCamera")
 
-        setUpCameraOutputs(width, height)
+        setUpCameraOutputs()
         val manager = this.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -340,14 +343,7 @@ class CameraService : IntentService("CameraService") {
         }
     }
 
-
-    /**
-     * Sets up member variables related to camera.
-     *
-     * @param width  The width of available size for camera preview
-     * @param height The height of available size for camera preview
-     */
-    private fun setUpCameraOutputs(width: Int, height: Int) {
+    private fun setUpCameraOutputs() {
         val manager = this.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             for (cameraId in manager.cameraIdList) {
@@ -402,7 +398,7 @@ class CameraService : IntentService("CameraService") {
      * Initiate a still image capture.
      */
     private fun takePicture() {
-        openCamera(1920, 1080)
+        openCamera()
     }
 
     /**
