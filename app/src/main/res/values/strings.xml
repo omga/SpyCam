@@ -13,6 +13,9 @@
     <string name="pref_title_pin_code">Pin Code</string>
     <string name="pref_description_pin_code">Enable Pin Code Protection</string>
 
+    <string name="pref_title_unlock_fail">Detect Phone Unlock Failures</string>
+    <string name="pref_description_unlock_fail">Take photos when user failed to unlock this phone</string>
+
     <string name="pref_title_number_of_photos">Number of photos after phone is unlocked</string>
     <string-array name="pref_number_of_photos_titles">
         <item>One</item>

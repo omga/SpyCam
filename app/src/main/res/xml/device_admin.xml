@@ -1,0 +1,9 @@
+<device-admin>
+
+    <uses-policies>
+        <limit-password />
+
+        <watch-login />
+    </uses-policies>
+
+</device-admin>

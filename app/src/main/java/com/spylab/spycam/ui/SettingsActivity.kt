@@ -1,6 +1,8 @@
 package com.spylab.spycam.ui
 
 import android.annotation.TargetApi
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -11,8 +13,11 @@ import android.os.Bundle
 import android.preference.*
 import android.text.TextUtils
 import android.view.MenuItem
+import android.widget.Toast
 import com.spylab.spycam.R
+import com.spylab.spycam.remote.AdminReceiver
 import com.spylab.spycam.util.ProcessHelper
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -79,6 +84,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || NotificationPreferenceFragment::class.java.name == fragmentName
     }
 
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -95,6 +101,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("number_of_photos"))
+
+            var sp = findPreference("enable_unlock_failures") as SwitchPreference
+//            sp.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+//                navigateToAdminSettings()
+//            }
+            sp.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference, any: Any ->
+                navigateToAdminSettings()
+            }
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,6 +119,32 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             }
             return super.onOptionsItemSelected(item)
         }
+
+
+        private fun navigateToAdminSettings(): Boolean {
+
+            val cn = ComponentName(activity, AdminReceiver::class.java)
+            val mgr = activity.getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
+
+            if (mgr.isAdminActive(cn)) {
+                val msgId: String = if (mgr.isActivePasswordSufficient) {
+                    "COMPLIANT"
+                } else {
+                    "NOT COMPLIANT"
+                }
+
+                Toast.makeText(activity, msgId, Toast.LENGTH_LONG).show()
+                return true
+            } else {
+                val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn)
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "device_admin_explanation")
+                startActivity(intent)
+                return false
+            }
+
+        }
+
     }
 
     /**
