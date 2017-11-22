@@ -6,7 +6,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.UserHandle
+import android.preference.PreferenceManager
 import android.util.Log
+import com.spylab.spycam.util.ProcessHelper
 
 class AdminReceiver : DeviceAdminReceiver() {
     override fun onEnabled(ctxt: Context, intent: Intent) {
@@ -22,7 +24,14 @@ class AdminReceiver : DeviceAdminReceiver() {
     }
 
     override fun onPasswordFailed(context: Context?, intent: Intent?, user: UserHandle?) {
-        Log.d("ADMIN", "FAILED")
+        Log.d("ADMIN", "FAILED; ctx = " + context)
+        if (context != null && PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getBoolean("enable_unlock_failures", false)) {
+            Log.d("ADMIN", "FAILED; CAPTURE ")
+
+            ProcessHelper.startCameraCapture(context)
+        }
     }
 
     override fun onPasswordSucceeded(context: Context?, intent: Intent?, user: UserHandle?) {
@@ -37,7 +46,5 @@ class AdminReceiver : DeviceAdminReceiver() {
             "NOT COMPLIANT"
         }
         Log.d("ADMIN", msg)
-
     }
-
 }

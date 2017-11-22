@@ -2,7 +2,7 @@
 
     <SwitchPreference
         android:defaultValue="true"
-        android:key="enable_spy_switch"
+        android:key="enable_unlock_success"
         android:summary="@string/pref_description_enable_spycam"
         android:title="@string/pref_title_enable_spycam" />
 
@@ -25,7 +25,7 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="3"
         android:entries="@array/pref_number_of_photos_titles"
         android:entryValues="@array/pref_number_of_photos_values"
         android:key="number_of_photos"

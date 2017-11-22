@@ -26,7 +26,7 @@ class UnkillableService : Service() {
         Log.d("UnkillableService", "onTaskRemoved")
         if (PreferenceManager
                 .getDefaultSharedPreferences(this)
-                .getBoolean("enable_spy_switch", true)) {
+                .getBoolean("enable_unlock_success", true)) {
 
             val restartService = Intent(applicationContext,
                     UnkillableService::class.java)

@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), PhotosAdapter.OnItemsSelectedCallback 
         setupRecycler()
         if (PreferenceManager
                 .getDefaultSharedPreferences(this)
-                .getBoolean("enable_spy_switch", true) &&
+                .getBoolean("enable_unlock_success", true) &&
                 !ProcessHelper.isAppRunning(this, "com.spylab.spycam:spyremote")) {
             ProcessHelper.startRemoteProcess(this)
             ProcessHelper.registerReceiver(this)

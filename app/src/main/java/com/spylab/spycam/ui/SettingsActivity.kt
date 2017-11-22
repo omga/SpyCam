@@ -43,7 +43,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 //                .getInt("number_of_photos", 3)
         if (PreferenceManager
                 .getDefaultSharedPreferences(this)
-                .getBoolean("enable_spy_switch", true)) {
+                .getBoolean("enable_unlock_success", true)) {
             ProcessHelper.startRemoteProcess(this)
             ProcessHelper.registerReceiver(this)
         } else {
@@ -103,11 +103,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("number_of_photos"))
 
             var sp = findPreference("enable_unlock_failures") as SwitchPreference
-//            sp.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-//                navigateToAdminSettings()
-//            }
-            sp.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference, any: Any ->
-                navigateToAdminSettings()
+            sp.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { pref: Preference, any: Any ->
+                navigateToAdminSettings(any as Boolean)
             }
         }
 
@@ -120,31 +117,27 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
 
-
-        private fun navigateToAdminSettings(): Boolean {
+        private fun navigateToAdminSettings(enable: Boolean): Boolean {
 
             val cn = ComponentName(activity, AdminReceiver::class.java)
             val mgr = activity.getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
 
-            if (mgr.isAdminActive(cn)) {
-                val msgId: String = if (mgr.isActivePasswordSufficient) {
-                    "COMPLIANT"
-                } else {
-                    "NOT COMPLIANT"
-                }
 
-                Toast.makeText(activity, msgId, Toast.LENGTH_LONG).show()
-                return true
+
+            return if (mgr.isAdminActive(cn)) {
+                if (!enable) {
+                    Toast.makeText(activity, "You may remove this app from administrators if you don't need this feature", Toast.LENGTH_LONG).show()
+                }
+                true
             } else {
+                Toast.makeText(activity, "Please set this app as administrator", Toast.LENGTH_LONG).show()
                 val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn)
                 intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "device_admin_explanation")
                 startActivity(intent)
-                return false
+                false
             }
-
         }
-
     }
 
     /**

@@ -188,6 +188,8 @@ class CameraService : IntentService("CameraService") {
         NUMBER_OF_PHOTOS = PreferenceManager
                 .getDefaultSharedPreferences(this@CameraService)
                 .getString("number_of_photos", "3").toInt()
+        Log.d("ASDASDASDAS", "ASDASD: " + NUMBER_OF_PHOTOS)
+
     }
 
     override fun onHandleIntent(intent: Intent?) {
@@ -350,10 +352,10 @@ class CameraService : IntentService("CameraService") {
                 val characteristics = manager.getCameraCharacteristics(cameraId)
 
                 // We don't use a front facing camera in this sample.
-                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
-                if (facing == null || facing != CameraCharacteristics.LENS_FACING_FRONT) {
-                    continue
-                }
+//                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+//                if (facing == null || facing != CameraCharacteristics.LENS_FACING_FRONT) {
+//                    continue
+//                }
                 mCameraId = cameraId
 
                 val map = characteristics.get(
@@ -365,6 +367,7 @@ class CameraService : IntentService("CameraService") {
                         CompareSizesByArea())
                 mSensorOrientation = manager.getCameraCharacteristics(mCameraId).get(
                         CameraCharacteristics.SENSOR_ORIENTATION)
+                Log.d("ASDASDASDAS", "ASDASD: " + NUMBER_OF_PHOTOS)
                 mImageReader = ImageReader.newInstance(largest.width, largest.height,
                         ImageFormat.JPEG, /*maxImages*/NUMBER_OF_PHOTOS)
                 mImageReader?.setOnImageAvailableListener(
