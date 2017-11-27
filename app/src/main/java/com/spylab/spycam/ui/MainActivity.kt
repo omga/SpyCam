@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.spylab.spycam.R
 import com.spylab.spycam.util.PhotoFileReader
 import com.spylab.spycam.util.ProcessHelper
@@ -49,6 +50,9 @@ class MainActivity : AppCompatActivity(), PhotosAdapter.OnItemsSelectedCallback 
         super.onStart()
         photos = photoFileReader.listFiles()
         adapter.setData(photos)
+        if (photos.size == 0) {
+            guide_text.visibility = View.VISIBLE
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 ContextCompat.checkSelfPermission(this,

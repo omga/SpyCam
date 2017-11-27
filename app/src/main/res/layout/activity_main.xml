@@ -11,4 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/guide_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/welcome_guide_text"
+            android:textColor="@color/grey_text"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

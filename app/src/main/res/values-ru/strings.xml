@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">SpyCam</string>
+    <string name="title_activity_settings">Настройки</string>
+
+    <string name="welcome_guide_text">Зайди в общие настройки и включи функционал который тебе нужен. Если ты хочешь узнать кто не смог разблокировать твой телефон- SpyCam\'у требуются права администратора</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="toast_may_remove_admin">Вы можете забрать права администратора у SpyCam если вам не нужна эта функция</string>
+    <string name="toast_set_admin_rights">Пожалуйста, предоставьте права администратора для SpyCam</string>
+
+    <!-- Example General settings -->
+
+    <string name="title_settings">Настройки</string>
+    <string name="title_delete">Удалить</string>
+    <string name="title_delete_all">Удалить Все Фото</string>
+
+    <string name="pref_header_general">Общие</string>
+
+    <string name="pref_title_enable_spycam">Определять успешные разблокировки телефона</string>
+    <string name="pref_description_enable_spycam">SpyCam будет делать снимки каждый раз когда телефон разблокирован</string>
+
+    <string name="pref_title_pin_code">Pin Code</string>
+    <string name="pref_description_pin_code">Enable Pin Code Protection</string>
+
+    <string name="pref_title_unlock_fail">Определять неудачные попытки разблокировки телефона</string>
+    <string name="pref_description_unlock_fail">Делать снимки когда пользователь неудачно ввел пароль(Приложению нужно получить права администратора)</string>
+
+    <string name="pref_title_number_of_photos">Колличество снимков когда телефон разблокирован/не смог разблокироваться</string>
+    <string-array name="pref_number_of_photos_titles">
+        <item>Один</item>
+        <item>Два</item>
+        <item>Три</item>
+        <item>Четыре</item>
+        <item>Пять</item>
+    </string-array>
+    <string-array name="pref_number_of_photos_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Уведомления</string>
+    <string name="pref_title_new_message_notifications">Уведомления о неудачной разблокировке</string>
+    <string name="pref_title_ringtone">Рингтон</string>
+    <string name="pref_ringtone_silent">Тишина</string>
+    <string name="pref_title_vibrate">Вибрация</string>
+</resources>

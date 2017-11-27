@@ -126,14 +126,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
             return if (mgr.isAdminActive(cn)) {
                 if (!enable) {
-                    Toast.makeText(activity, "You may remove this app from administrators if you don't need this feature", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, getString(R.string.toast_may_remove_admin), Toast.LENGTH_LONG).show()
                 }
                 true
             } else {
-                Toast.makeText(activity, "Please set this app as administrator", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, getString(R.string.toast_set_admin_rights), Toast.LENGTH_LONG).show()
                 val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn)
-                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "device_admin_explanation")
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.toast_set_admin_rights))
                 startActivity(intent)
                 false
             }

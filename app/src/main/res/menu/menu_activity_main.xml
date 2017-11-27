@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_item_delete"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_action_trash"
         android:title="@string/title_delete"
         android:visible="false"
         app:showAsAction="ifRoom" />
@@ -13,6 +13,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_item_settings"
+        android:icon="@drawable/ic_action_settings"
         android:title="@string/title_settings"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>
