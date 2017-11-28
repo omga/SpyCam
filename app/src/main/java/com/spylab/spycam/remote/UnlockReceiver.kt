@@ -18,7 +18,6 @@ class UnlockReceiver : BroadcastReceiver() {
                 ProcessHelper.startCameraCapture(context)
             }
             intent.action == Intent.ACTION_SCREEN_ON -> Log.d("UnlockReceiver", "ACTION_SCREEN_ON")
-            else -> throw UnsupportedOperationException("Not yet implemented")
         }
     }
 
